@@ -26,7 +26,7 @@ function pointer:update()
   local tx, ty, tz = x + dx * r, y + dy * r, z + dz * r
 
   if self.world then
-    local closest = 1e6
+    local closest = math.huge
 
     self.hit = nil
 
