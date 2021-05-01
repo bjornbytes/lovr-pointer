@@ -3,17 +3,6 @@ pointer.__index = pointer
 
 local unpack = unpack or table.unpack
 
-local function orientationToVector(angle, ax, ay, az)
-  local x, y, z = 0, 0, -1
-  local dot = ax * x + ay * y + az * z
-  local cx, cy, cz = ay * z - az * y, az * x - ax * z, ax * y - ay * x
-  local sin, cos = math.sin(angle), math.cos(angle)
-  return
-    cos * x + sin * cx + (1 - cos) * dot * ax,
-    cos * y + sin * cy + (1 - cos) * dot * ay,
-    cos * z + sin * cz + (1 - cos) * dot * az
-end
-
 function pointer.new(options)
   local self = setmetatable({}, pointer)
   self:init(options)
@@ -33,7 +22,7 @@ function pointer:update()
 
   local r = self.range
   local x, y, z = self.source:getPosition()
-  local dx, dy, dz = orientationToVector(self.source:getOrientation())
+  local dx, dy, dz = quat(self.source:getOrientation()):direction():unpack()
   local tx, ty, tz = x + dx * r, y + dy * r, z + dz * r
 
   if self.world then
