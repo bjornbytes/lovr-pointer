@@ -1,6 +1,24 @@
 local pointer = {}
 pointer.__index = pointer
 
+pointer.handWrapper = {}
+pointer.handWrapper.__index = pointer.handWrapper
+
+function pointer.handWrapper.new(hand)
+  local self = setmetatable({}, pointer.handWrapper)
+  self.hand = hand
+  return self
+end
+
+function pointer.handWrapper:getPosition()
+  return lovr.headset.getPosition(self.hand)
+end
+
+function pointer.handWrapper:getOrientation()
+  return lovr.headset.getOrientation(self.hand)
+end
+
+
 local unpack = unpack or table.unpack
 
 function pointer.new(options)

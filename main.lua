@@ -1,25 +1,22 @@
 pointer = require 'pointer'
 
-local function drawBox(box, color)
+cubeSize = 0.2
+
+local function drawCube(box, color)
   local x, y, z = box:getPosition()
-  local dx, dy, dz = box:getShapeList()[1]:getDimensions()
   lovr.graphics.setColor(color)
-  lovr.graphics.box('fill', x, y, z, dx, dy, dz, box:getOrientation())
+  lovr.graphics.cube('fill', x, y, z, cubeSize)
 end
 
-local function refreshSource()
-  pointer:setSource(lovr.headset.getControllers()[1] or lovr.headset)
-end
 
 function lovr.load()
   -- Make a little physics scene
   world = lovr.physics.newWorld()
-  ground = world:newBoxCollider(0, 0, 0, 5, .001, 5)
-  ground:setKinematic(true)
-  box = world:newBoxCollider(0, 1, 0, .5)
+  box = world:newBoxCollider(0, 1.5, -1, cubeSize)
+  box:setKinematic(true)
 
   -- Initialize the pointer
-  pointer:init({ source = lovr.headset, world = world })
+  pointer:init({ source = pointer.handWrapper.new("hand/left"), world = world })
 end
 
 function lovr.update(dt)
@@ -30,11 +27,9 @@ end
 function lovr.draw()
   local hit = pointer:getHit()
 
-  drawBox(ground, { 30, 30, 30 })
-
   -- Highlight that darn box if we're pointing at it
-  local boxColor = (hit and hit.collider == box) and { 50, 100, 200 } or { 20, 70, 170 }
-  drawBox(box, boxColor)
+  local boxColor = (hit and hit.collider == box) and { 0.50, 0.100, 0.200 } or { 0.20, 0.70, 0.170 }
+  drawCube(box, boxColor)
 
   lovr.graphics.setColor(255, 255, 255)
 
@@ -50,6 +45,3 @@ function lovr.draw()
     lovr.graphics.line(hit.x, hit.y, hit.z, hit.x + hit.nx * .1, hit.y + hit.ny * .1, hit.z + hit.nz * .1)
   end
 end
-
-lovr.controlleradded = refreshSource
-lovr.controllerremoved = refreshSource
